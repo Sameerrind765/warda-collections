@@ -11,7 +11,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 app.use(cors());
 app.use(express.json());
 
-// Email endpoint
 app.post("/send", async (req, res) => {
   const { to, subject, message } = req.body;
 
