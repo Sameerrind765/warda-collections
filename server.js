@@ -13,6 +13,7 @@ const apiKey = process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.post("/send", async (req, res) => {
@@ -33,17 +34,26 @@ app.post("/send", async (req, res) => {
 });
 
 app.post("/contact", async (req, res) => {
-  const { to, subject, message } = req.body;
+  const { email, name, subject, message } = req.body;
 
   try {
     const emailResponse = await resend.emails.send({
       from: "Warda Collections <info@wardacollections.com>",
-      to:"sameerrind789@gmail.com",
-      subject,
-      html: `<h1>From ${to} </h1>
-      <h2> Message </h2> <p>${message}</p>`
-    });
+      to: "sameerrind789@gmail.com",
+      subject: subject,
+      html: `
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0A0A0A; color: #FFFFFF; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto;">
+  <h1 style="color: #d3e97a; font-size: 24px; border-bottom: 2px solid #d3e97a; padding-bottom: 10px; margin-bottom: 20px;">New Contact Form Submission</h1>
+  <p style="font-size: 16px; margin: 0 0 10px 0;"><strong>Name:</strong> ${name}</p>
+  <p style="font-size: 16px; margin: 0 0 10px 0;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #d3e97a; text-decoration: none;">${email}</a></p>
+  <div style="background-color: #1a1a1a; padding: 15px; border-radius: 6px; margin-top: 20px;">
+    <h2 style="color: #d3e97a; font-size: 18px; margin-top: 0;">Message:</h2>
+    <p style="font-size: 16px; line-height: 1.6;">${message}</p>
+  </div>
+</div>
+`,
 
+    });
     res.status(200).json({ success: true, id: emailResponse.id });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
