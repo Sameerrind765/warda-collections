@@ -32,6 +32,24 @@ app.post("/send", async (req, res) => {
   }
 });
 
+app.post("/contact", async (req, res) => {
+  const { to, subject, message } = req.body;
+
+  try {
+    const emailResponse = await resend.emails.send({
+      from: "Warda Collections <info@wardacollections.com>",
+      to:"sameerrind789@gmail.com",
+      subject,
+      html: `<h1>From ${to} </h1>
+      <h2> Message </h2> <p>${message}</p>`
+    });
+
+    res.status(200).json({ success: true, id: emailResponse.id });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.delete("/delete-image", async (req, res) => {
   const { publicIds } = req.body; // now expecting array
 
